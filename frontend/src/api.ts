@@ -33,8 +33,16 @@ const redirectToLogin = (): void => {
   }
 };
 
-const buildUrl = (path: string): string =>
-  path.match(/^https?:\/\//i) ? path : `${API_URL}${path.startsWith('/') ? '' : '/'}${path}`;
+const buildUrl = (path: string): string => {
+  if (path.match(/^https?:\/\//i)) {
+    return path;
+  }
+
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const normalizedBase = API_URL.replace(/\/+$/, '');
+
+  return normalizedBase ? `${normalizedBase}${normalizedPath}` : normalizedPath;
+};
 
 const parseResponse = async <T>(response: Response): Promise<T> => {
   if (response.status === 204) {
